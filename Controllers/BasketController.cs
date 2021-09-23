@@ -7,7 +7,7 @@ namespace basket_api.Controllers
 {
     public class BasketController : Controller
     {
-        [HttpGet("/basket/CheckBasket")] // naming incosistency we use read market item in the market controller but we use check in here 
+        [HttpGet("/basket/CheckBasket")]
         public string checkBasketItems(int BasketId) 
         {
             return BasketManagerDb.ReadBasketItems(BasketId);

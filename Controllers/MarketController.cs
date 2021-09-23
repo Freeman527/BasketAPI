@@ -8,7 +8,7 @@ namespace basket_api.Controllers
 {
     public class MarketController : Controller
     {   
-        [HttpGet("market/ReadMarketItems")] // naming inconsistency CheckXXX and ReadXXX
+        [HttpGet("market/ReadMarketItems")]
         public string ReadMarketItem()
         {
             return MarketManagerDb.ReadMarketItem();

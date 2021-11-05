@@ -4,23 +4,21 @@ using Npgsql;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace basket_api
 {
     public class MarketManagerDb
     {
-        private static string db_serveradress = "127.0.0.1";
-        private static string db_serverport = "5432";
-        private static string db_userid = "postgres";
-        private static string db_password = "adamadam41";
-
-
+    
         //READ
         public static string ReadMarketItem() 
         {
-            string sqlcommand = "SELECT item_id as itemId,item_name as itemName,item_type as itemType,item_price as itemPrice FROM market_items";
+            SqlConnection dbconnection = new("Server=freecmsDB.mssql.somee.com;Database=freecmsDB;User Id=freeman527_SQLLogin_1;Password=o7es1v2wzs;");
 
-            var dbconnection = new NpgsqlConnection($"Server={db_serveradress};Port={db_serverport};Database=postgres;User Id={db_userid};Password={db_password};");
+            string sqlcommand = "SELECT item_id as ItemId,item_name as ItemName,item_type as ItemType,item_price as ItemPrice FROM market_items";
+
             List<MarketItem> items = dbconnection.Query<MarketItem>(sqlcommand).ToList();
 
             var jsondata = JsonConvert.SerializeObject(items).ToString(); // Data acces shouldn't serialize any output data
@@ -31,9 +29,9 @@ namespace basket_api
         //CREATE
         public static bool PutItemToMarket(int itemId, string itemName, string itemType, float itemPrice)  
         {
-            string sqlcommand = $"INSERT INTO market_items VALUES({itemId},'{itemName}','{itemType}',{itemPrice});";
+            SqlConnection dbconnection = new("Server=freecmsDB.mssql.somee.com;Database=freecmsDB;User Id=freeman527_SQLLogin_1;Password=o7es1v2wzs;");
 
-            var dbconnection = new NpgsqlConnection($"Server={db_serveradress};Port={db_serverport};Database=postgres;User Id={db_userid};Password={db_password};");    
+            string sqlcommand = $"INSERT INTO market_items VALUES({itemId},'{itemName}','{itemType}',{itemPrice});";
 
             dbconnection.Execute(sqlcommand);
 
@@ -44,9 +42,9 @@ namespace basket_api
 
         public static bool DeleteItemFromMarket(int itemId) 
         {
-            string sqlcommand = $"DELETE FROM market_items WHERE item_id = {itemId}";
+            SqlConnection dbconnection = new("Server=freecmsDB.mssql.somee.com;Database=freecmsDB;User Id=freeman527_SQLLogin_1;Password=o7es1v2wzs;");
 
-            var dbconnection = new NpgsqlConnection($"Server={db_serveradress};Port={db_serverport};Database=postgres;User Id={db_userid};Password={db_password};"); 
+            string sqlcommand = $"DELETE FROM market_items WHERE item_id = {itemId}";
 
             dbconnection.Execute(sqlcommand);
 
@@ -57,30 +55,30 @@ namespace basket_api
 
          public static bool UpdateItemFromMarket(int itemId, string itemName, string itemType, float itemPrice) 
          {
+            SqlConnection dbconnection = new("Server=freecmsDB.mssql.somee.com;Database=freecmsDB;User Id=freeman527_SQLLogin_1;Password=o7es1v2wzs;");
+
             string sqlcommand = $"UPDATE market_items SET item_name = '{itemName}' , item_type = '{itemType}' , item_price = '{itemPrice}' WHERE item_id = {itemId}";
 
-            var dbconnection = new NpgsqlConnection($"Server={db_serveradress};Port={db_serverport};Database=postgres;User Id={db_userid};Password={db_password};");
-
-            MarketItem marketitems = new MarketItem();
-            marketitems.itemId = itemId;
+            MarketItem marketitems = new();
+            marketitems.ItemId = itemId;
             
             if(itemName == null) 
             {
-                marketitems.itemType = dbconnection.Query($"SELECT item_name FROM market_items WHERE item_id = {itemId}").ToString();
+                marketitems.ItemType = dbconnection.Query($"SELECT item_name FROM market_items WHERE item_id = {itemId}").ToString();
             } else 
             {
-                marketitems.itemName = itemName;
+                marketitems.ItemName = itemName;
             }
 
             if(itemType != null) 
             {
-                marketitems.itemType = dbconnection.Query($"SELECT item_type FROM market_items WHERE item_id = {itemId}").ToString();
+                marketitems.ItemType = dbconnection.Query($"SELECT item_type FROM market_items WHERE item_id = {itemId}").ToString();
             } else 
             {
-                marketitems.itemType = itemType;
+                marketitems.ItemType = itemType;
             }
             
-            marketitems.itemPrice = itemPrice;
+            marketitems.ItemPrice = itemPrice;
 
             dbconnection.Execute(sqlcommand);
 
